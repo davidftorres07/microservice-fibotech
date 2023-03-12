@@ -1,0 +1,24 @@
+spring:
+  api-gateway:
+    security:
+      user: admin
+      password: admin
+      key: 51655468576D5A7134743777217A25432A462D4A614E645267556A586E327235
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+server:
+  port: ${SERVER_PORT:8090}
+
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${instanceId:${random.value}}
+  client:
+    service-url:
+      defaultZone: ${eureka.client.serviceUrl.defaultZone:http://localhost:8761/eureka/}

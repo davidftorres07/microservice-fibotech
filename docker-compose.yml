@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  order-service1:
+    image: 'fibotech-order-service:v1'
+    build: ./orders
+    container_name: order-service1
+    depends_on:
+      - eureka-server
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/spring-orders
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_NAME=spring-orders
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=order-service1
+      #      - SERVER_PORT=8081
+      - SERVER_PORT=0
+    #    ports:
+    #      - '8081'
+    volumes:
+      - data:/app/data
+
+  order-service2:
+    image: 'fibotech-order-service:v1'
+    build: ./orders
+    container_name: order-service2
+    depends_on:
+      - eureka-server
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/spring-orders
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_NAME=spring-orders
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=order-service2
+      - SERVER_PORT=0
+    volumes:
+      - data:/app/data
+
+  order-service3:
+    image: 'fibotech-order-service:v1'
+    build: ./orders
+    container_name: order-service3
+    depends_on:
+      - eureka-server
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/spring-orders
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_NAME=spring-orders
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=order-service3
+      - SERVER_PORT=0
+    volumes:
+      - data:/app/data
+
+  api-gateway:
+    image: 'fibotech-api-gateway:v1'
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - '8090:8090'
+    depends_on:
+      - eureka-server
+      - db
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - SERVER_PORT=8090
+
+  eureka-server:
+    image: 'fibotech-eureka:v1'
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - '0.0.0.0:8761:8761'
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+      - SERVER_PORT=8761
+    depends_on:
+      - db
+
+  db:
+    image: 'postgres:alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=spring-orders
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:

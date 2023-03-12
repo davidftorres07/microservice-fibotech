@@ -1,0 +1,5 @@
+com\fibotech\microservice\MicroserviceApplicationTests.class
+com\fibotech\microservice\orders\controller\OrderControllerIntegrationTest.class
+com\fibotech\microservice\orders\service\OrderServiceImpDataJpaTest.class
+com\fibotech\microservice\orders\dto\OrderMapperTest.class
+com\fibotech\microservice\orders\service\OrderServiceImpUnitTest.class
