@@ -1,11 +1,14 @@
 package com.fibotech.gateway.controller;
 
-import com.fibotech.gateway.controller.request.RequestLogin;
-import com.fibotech.gateway.security.JwTValidationService;
+import com.fibotech.gateway.controller.request.RequestAuth;
+import com.fibotech.gateway.controller.respopnse.ResponseAuth;
+import com.fibotech.gateway.security.JwtValidationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,19 +18,27 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AuthController {
 
-   private final MapReactiveUserDetailsService userDetailsService;
-   private final JwTValidationService jwTValidationService;
+    private final MapReactiveUserDetailsService userDetailsService;
+    private final JwtValidationService jwTValidationService;
+    private final PasswordEncoder passwordEncoder;
 
-    @RequestMapping("/auth")
-    Mono<ResponseEntity<String>> getRoot() {
+    @RequestMapping("/root")
+    public Mono<ResponseEntity<String>> getRoot() {
         return Mono.just(ResponseEntity.ok("ALL OK!"));
     }
 
-    @RequestMapping("/login")
-    Mono<ResponseEntity<String>> getTest(@RequestBody RequestLogin request) {
-        Mono<UserDetails> userDetails = userDetailsService.findByUsername(request.getEmail()).defaultIfEmpty(null);
+    @PostMapping("/login")
+    public Mono<ResponseEntity<ResponseAuth>> login(@RequestBody RequestAuth request) {
+        var userDetails = userDetailsService.findByUsername(request.getEmail());
 
-
-        return Mono.just(ResponseEntity.ok("TEST OK!"));
+        return userDetails.flatMap(user -> {
+            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                String token = jwTValidationService.generate(user);
+                return Mono.just(ResponseEntity.ok(new ResponseAuth(token, "Authentication successful")));
+            }
+            return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseAuth("", "Authentication failed, Invalid Credentials")));
+        }).switchIfEmpty(
+                Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseAuth("", "Authentication failed, User not found")))
+        );
     }
 }

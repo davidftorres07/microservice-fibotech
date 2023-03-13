@@ -20,11 +20,11 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class JwTValidationService {
+public class JwtValidationService {
     @Value("${spring.api-gateway.security.key}")
     private String SECURITY_KEY;
 
-    public String generateNewToken(UserDetails userDetails) {
+    public String generate(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
@@ -47,8 +47,8 @@ public class JwTValidationService {
         return extractExpiration(token).before(new Date());
     }
 
-    public String extractUserName(String jwt) {
-        return extractClaim(jwt, Claims::getSubject);
+    public String extractUserName(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
     private Date extractExpiration(String token) {
@@ -69,7 +69,7 @@ public class JwTValidationService {
                 .getBody();
     }
 
-    private Key getSigningKey() {
+    public Key getSigningKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECURITY_KEY));
     }
 }
