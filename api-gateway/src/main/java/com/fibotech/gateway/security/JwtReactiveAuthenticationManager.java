@@ -1,5 +1,8 @@
 package com.fibotech.gateway.security;
 
+import com.fibotech.gateway.exceptions.JwtAuthenticationException;
+import com.fibotech.gateway.exceptions.JwtExpiredTokenException;
+import com.fibotech.gateway.exceptions.JwtInvalidUserException;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -21,10 +24,21 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
 
         String username = validationService.extractUserName(authToken);
 
-        userDetailService.findByUsername(username).flatMap(userDetails -> {
-            if (validationService.isTokenValid(authToken, userDetails)) {
-                return Mono.just(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities()));
+        return userDetailService.findByUsername(username).flatMap(userDetails -> {
+            try{
+                if(!validationService.isTokenExpired(authToken)) {
+                    if (validationService.isTokenValid(authToken, userDetails))
+                        return Mono.just(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities()));
+                    else
+                        throw new JwtInvalidUserException("Invalid user in token.");
+                } else
+                    throw new JwtExpiredTokenException("Token has expired.");
+            }  catch (ExpiredJwtException e) {
+                throw new JwtExpiredTokenException("Token has expired.");
+            } catch (Exception e) {
+                throw new JwtAuthenticationException("Failed to authenticate token.", e);
             }
-
-        }).switchIfEmpty(Mono.just(new UsernameNotFoundException("")));
+        });
+    }
 }
+

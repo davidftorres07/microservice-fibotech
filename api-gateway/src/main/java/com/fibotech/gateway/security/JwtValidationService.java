@@ -40,10 +40,11 @@ public class JwtValidationService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String userName = extractUserName(token);
-        return userName.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return userName.equals(userDetails.getUsername());
     }
 
-    private boolean isTokenExpired(String token) {
+
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
