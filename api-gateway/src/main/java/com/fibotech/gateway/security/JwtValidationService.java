@@ -1,6 +1,7 @@
 package com.fibotech.gateway.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -21,6 +22,9 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class JwtValidationService {
+
+    @Value("${spring.api-gateway.security.exp-time}")
+    private Integer EXP_MINUTES;
     @Value("${spring.api-gateway.security.key}")
     private String SECURITY_KEY;
 
@@ -33,7 +37,7 @@ public class JwtValidationService {
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plus(2, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(Instant.now().plus(EXP_MINUTES, ChronoUnit.MINUTES)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -42,7 +46,6 @@ public class JwtValidationService {
         String userName = extractUserName(token);
         return userName.equals(userDetails.getUsername());
     }
-
 
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -61,13 +64,25 @@ public class JwtValidationService {
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Jws<Claims> getJws(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token);
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            getJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Claims extractAllClaims(String token) {
+        return getJws(token).getBody();
     }
 
     public Key getSigningKey() {

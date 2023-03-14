@@ -1,6 +1,7 @@
 spring:
   api-gateway:
     security:
+      exp-time: ${spring.apiGateway.security.expTime:5}
       user: admin
       password: admin
       key: 51655468576D5A7134743777217A25432A462D4A614E645267556A586E327235

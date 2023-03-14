@@ -69,6 +69,7 @@ services:
       - db
     environment:
       - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - spring.apiGateway.security.expTime=15
       - SERVER_PORT=8090
 
   eureka-server:
