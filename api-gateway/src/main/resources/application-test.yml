@@ -1,0 +1,20 @@
+spring:
+  api-gateway:
+    security:
+      exp-time: 1
+      user: admin
+      password: admin
+      key: 51655468576D5A7134743777217A25432A462D4A614E645267556A586E327235
+  application:
+    name: gateway-dev
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+    discovery:
+      enabled: false
+server:
+  port: 8090
+
+

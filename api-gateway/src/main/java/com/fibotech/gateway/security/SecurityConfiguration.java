@@ -40,7 +40,7 @@ public class SecurityConfiguration {
         return http
                 .csrf().disable()
                 .authorizeExchange(exchanges -> {
-                            exchanges.pathMatchers(HttpMethod.POST, "/login").permitAll();
+                            exchanges.pathMatchers(HttpMethod.POST, "/auth").permitAll();
                             exchanges.anyExchange().authenticated();
                         }
                 )

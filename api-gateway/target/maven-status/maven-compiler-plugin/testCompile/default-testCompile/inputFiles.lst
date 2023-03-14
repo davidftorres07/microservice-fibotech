@@ -1,1 +1,5 @@
-C:\Users\david\IdeaProjects\fibotech\api-gateway\src\test\java\com\fibotech\gateway\GatewayApplicationTest.java
+D:\Data\Courses\Java\company_practical_test\fibotech\api-gateway\src\test\java\com\fibotech\gateway\security\JwtAuthenticationConverterTest.java
+D:\Data\Courses\Java\company_practical_test\fibotech\api-gateway\src\test\java\com\fibotech\gateway\security\JwtAuthenticationManagerTest.java
+D:\Data\Courses\Java\company_practical_test\fibotech\api-gateway\src\test\java\com\fibotech\gateway\controller\AuthControllerIntegrationTest.java
+D:\Data\Courses\Java\company_practical_test\fibotech\api-gateway\src\test\java\com\fibotech\gateway\security\JwtValidationServiceTest.java
+D:\Data\Courses\Java\company_practical_test\fibotech\api-gateway\src\test\java\com\fibotech\gateway\GatewayApplicationTest.java

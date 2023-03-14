@@ -63,7 +63,7 @@ services:
     build: ./api-gateway
     container_name: api-gateway
     ports:
-      - '8090:8090'
+      - '8090:8090' #open port for eureka server 
     depends_on:
       - eureka-server
       - db

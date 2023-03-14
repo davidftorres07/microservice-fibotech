@@ -1,5 +1,8 @@
 com\fibotech\gateway\security\SecurityConfiguration.class
-com\fibotech\gateway\security\JwtAuthenticationFilter.class
-com\fibotech\gateway\security\JwTValidationService.class
+com\fibotech\gateway\security\JwtAuthenticationManager.class
+com\fibotech\gateway\controller\request\RequestAuth.class
+com\fibotech\gateway\security\JwtValidationService.class
+com\fibotech\gateway\controller\response\ResponseAuth.class
+com\fibotech\gateway\security\JwtAuthenticationConverter.class
 com\fibotech\gateway\controller\AuthController.class
 com\fibotech\gateway\GatewayApplication.class

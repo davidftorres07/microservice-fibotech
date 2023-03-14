@@ -27,5 +27,4 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
             return Mono.empty();
         });
     }
-
 }

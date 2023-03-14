@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class JwtValidationService {
     @Value("${spring.api-gateway.security.key}")
     private String SECURITY_KEY;
 
+    private final TemporalUnit temporalUnit = ChronoUnit.MINUTES;
     public String generate(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
@@ -37,7 +39,7 @@ public class JwtValidationService {
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plus(EXP_MINUTES, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(Instant.now().plus(EXP_MINUTES, temporalUnit)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -65,8 +67,7 @@ public class JwtValidationService {
     }
 
     private Jws<Claims> getJws(String token) {
-        return Jwts
-                .parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token);
@@ -75,10 +76,10 @@ public class JwtValidationService {
     public boolean validateToken(String token) {
         try {
             getJws(token);
-            return true;
         } catch (Exception e) {
             return false;
         }
+        return true;
     }
 
     private Claims extractAllClaims(String token) {

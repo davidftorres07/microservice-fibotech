@@ -1,1 +1,6 @@
+com\fibotech\gateway\security\JwtValidationServiceTest.class
 com\fibotech\gateway\GatewayApplicationTest.class
+com\fibotech\gateway\security\JwtAuthenticationManagerTest$User.class
+com\fibotech\gateway\security\JwtAuthenticationConverterTest.class
+com\fibotech\gateway\controller\AuthControllerIntegrationTest.class
+com\fibotech\gateway\security\JwtAuthenticationManagerTest.class
